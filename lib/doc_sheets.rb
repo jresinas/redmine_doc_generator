@@ -73,7 +73,6 @@ class DocSheets
     init_row = 7
     init_col = 1
     end_col = 8
-    wiki_headers = "| *Recurso Técnico* | *Características* | *Fecha Requerida* | *Fecha de caducidad* | Valor estimado (€) | Fecha recepción | Valor real (€) |"
     wiki_text = ""
 
     wiki_pages = Project.find(project_id).wiki.pages
@@ -83,7 +82,7 @@ class DocSheets
       end
     end
 
-    result = DocSheets.get_wiki_table(wiki_text, wiki_headers, "Entorno:", true)
+    result = DocSheets.get_wiki_table(wiki_text, "Entorno:", true)
 
     OdsManager.insert_table_rows(sheet,result,init_row,init_col,init_row+result.length-1,end_col)
   end  
@@ -98,31 +97,26 @@ class DocSheets
     init_col_ec = 1
     end_col_ec = 13
     key_word_ec = "Elementos de configuración"
-    wiki_headers_ec = "| *Elemento* | *Código* | *Tipo* | *Realiza* | *Responsable Organización* | *Responsable Cliente* | *Método* | *Estado* | *Fecha Realizado* | *Fecha Aprobado*| *Fecha Linea Base (LB)* | *¿Se entraga al cliente?* | *Observaciones* |"
     # Parámetros para tabla "Aprobación Cambios a Requisito"
     init_row_acr = 13 #22
     init_col_acr = 1
     end_col_acr = 3
     key_word_acr = "Aprobación Cambios a Requisito"
-    wiki_headers_acr = "| *Responsable Organización* | *Responsable Cliente* | *Método* |"
     # Parámetros para tabla "Actividades de gestión de configuración"
     init_row_agc = 19 #28
     init_col_agc = 1
     end_col_agc = 7
     key_word_agc = "Actividades de gestión de configuración"
-    wiki_headers_agc = "| *Actividad* | *Responsable* | *Fecha prevista* | *Esfuerzo previsto* | *Fecha real* | *Esfuerzo real* | *Observaciones* |"
     # Parámetros para tabla "Recursos"
     init_row_r = 24 #37
     init_col_r = 1
     end_col_r = 7
     key_word_r = "Recursos"
-    wiki_headers_r = "| *Recurso* | *Descripción / características* | *Observaciones* | *Fecha inicio de servicio* | *Fecha fin de servicio* |"
     # Parámetros para tabla "Derechos de acceso"
     init_row_da = 29 #45
     init_col_da = 1
     end_col_da = 6
     key_word_da = "Derechos de acceso"
-    wiki_headers_da = "| *Perfil* | *Nombre* | *Entorno desarrollo* | *Entorno pruebas* | *Entorno producción* | *Observaciones* |"
     # Parámetros para lista de nomenclatura de elementos
     row_ne = 31 #52
     col_ne = 2
@@ -145,27 +139,27 @@ class DocSheets
 
     # Obtenemos y escribimos los derechos de acceso
     result = Array.new
-    result = DocSheets.get_wiki_table(wiki_text, wiki_headers_da, key_word_da, false)
+    result = DocSheets.get_wiki_table(wiki_text, key_word_da, false)
     OdsManager.insert_table_rows(sheet,result,init_row_da,init_col_da,init_row_da+result.length-1,end_col_da)
     
     # Obtenemos y escribimos los recursos
     result = Array.new
-    result = DocSheets.get_wiki_table(wiki_text, wiki_headers_r, key_word_r, false)
+    result = DocSheets.get_wiki_table(wiki_text, key_word_r, false)
     OdsManager.insert_table_rows(sheet,result,init_row_r,init_col_r,init_row_r+result.length-1,end_col_r)
     
     # Obtenemos y escribimos las actividades de gestión de configuración
     result = Array.new
-    result = DocSheets.get_wiki_table(wiki_text, wiki_headers_agc, key_word_agc, false)
+    result = DocSheets.get_wiki_table(wiki_text, key_word_agc, false)
     OdsManager.insert_table_rows(sheet,result,init_row_agc,init_col_agc,init_row_agc+result.length-1,end_col_agc)
     
     # Obtenemos y escribimos la aprobación de cambios a requisitos
     result = Array.new
-    result = DocSheets.get_wiki_table(wiki_text, wiki_headers_acr, key_word_acr, false)
+    result = DocSheets.get_wiki_table(wiki_text, key_word_acr, false)
     OdsManager.insert_table_rows(sheet,result,init_row_acr,init_col_acr,init_row_acr+result.length-1,end_col_acr)
     
     # Obtenemos y escribimos los elementos de configuración
     result = Array.new
-    result = DocSheets.get_wiki_table(wiki_text, wiki_headers_ec, key_word_ec, false)
+    result = DocSheets.get_wiki_table(wiki_text, key_word_ec, false)
     OdsManager.insert_table_rows(sheet,result,init_row_ec,init_col_ec,init_row_ec+result.length-1,end_col_ec)
   end  
 
@@ -187,10 +181,7 @@ class DocSheets
   # El argumento "multiple" permite indicar si se van a localizar varias tablas o solo una
   # En caso de identificar varias tablas, key_word hace referencia al texto que precede al título de cada tabla que va a ser tratada. En cada subarray del array generado, el primer elemento será el nombre de la tabla a la que pertenece la fila
   # En caso de identificar una única tabla, key_word hace referencia al título de la tabla a tratar.
-  def self.get_wiki_table(wiki_content, table_headers, key_word, multiple = false)
-    # Eliminamos las cabeceras de la tabla
-    wiki_content = wiki_content.gsub(table_headers, "")
-
+  def self.get_wiki_table(wiki_content, key_word, multiple = false)
     # Eliminamos espacios entre "|"
     wiki_content = wiki_content.gsub(/\| /,"|")
     wiki_content = wiki_content.gsub(/ \|/,"|")
@@ -200,6 +191,14 @@ class DocSheets
 
     # Sustituimos la palabra clave por el simbolo "@" para indicar el inicio de una tabla de interés
     wiki_content = wiki_content.gsub(key_word,"@")
+
+    # Eliminamos cabeceras de la tabla
+    if multiple
+      wiki_content = wiki_content.gsub(/@[\s]*([^\|\r\n]+[\r\n]*)\|[^\r\n]+\|[\r\n]+/) {"@"+$1.to_s}
+    else
+      wiki_content = wiki_content.gsub(/@[\r\n|\n|\r]*\|[^\n\r]+\|[\r\n|\n|\r]/,"@")
+    end
+
     # Borramos posibles espacios alrededor del simbolo "@"
     wiki_content = wiki_content.gsub(/\s*@\s*([^\s].*[^\s])/) {"@"+$1.to_s}
 
@@ -254,7 +253,6 @@ class DocSheets
 
     wiki_content = wiki_content.gsub(key_word,"@@")
     result = wiki_content.gsub(/[^@]*@@\s*([^\n\r]+)[^@]*/) {$1.to_s}
-    puts "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa #{result}"
     return result
   end
 
