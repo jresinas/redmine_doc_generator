@@ -14,6 +14,7 @@ class GeneratorsController < ApplicationController
     project = Project.find(params[:project_id])
     expediente = project.name
 
+    # Obtenemos el último expediente asociado al proyecto para mostrarlo en el nombre del fichero que se va a generar
     project.visible_custom_field_values.each do |element|
       if element.custom_field.name == "Expediente"
         element.value.gsub(", ",",")
@@ -22,15 +23,18 @@ class GeneratorsController < ApplicationController
       end
     end
 
-    template = 'plugins/redmine_doc_generator/templates/Plan_de_Proyecto.ods'
+    # Creamos el nuevo fichero a partir de la plantilla seleccionada en la configuración del plugin
+    template = 'plugins/redmine_doc_generator/templates/'+Setting.plugin_redmine_doc_generator['pp_template_dir']
     filename = 'pp_prueba'
     sheet = OdsManager.load(template,filename)
 
+    # Generamos el contenido de las distintas pestañas del fichero
     DocSheets.pp_general(sheet,params[:project_id])
     DocSheets.pp_rrhh(sheet,params[:project_id])
     DocSheets.pp_recursos_tecnicos(sheet,params[:project_id])
     DocSheets.pp_plan_configuracion(sheet,params[:project_id])
 
+    # Guardamos el fichero y lo enviamos al usuario
     sheet.save()
     send_file 'tmp/'+filename+'.ods' ,:x_sendfile => true, :filename => 'P_PRO-'+expediente+'-Plan_Proyecto.ods'
   end
