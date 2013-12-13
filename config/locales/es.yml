@@ -5,7 +5,7 @@ es:
     dir_cp: "Ruta a la plantilla para la generación de los casos de prueba:"
     dir_pp: "Ruta a la plantilla para la generación del plan de proyecto:"
   hook_title: "Generación de Documentación del Proyecto"
-  hook_instructions: "Los documentos se generarán a partir de los datos registrados en Redmine. Procedimiento genérico a seguir:<br/>1. Pulsar el enlace para generar el documento, o seleccionar la plantilla y pulsar en 'Generar'<br/>2. Guardar el fichero resultante<br/>3. Corregir el formato y/o contenido<br/>4. Almacenarlo en el repositorio del proyecto"
+  hook_instructions: "Los documentos se generarán a partir de los datos registrados en Redmine. Procedimiento genérico a seguir:<br/>1. Pulsar el enlace para generar el documento<br/>2. Guardar el fichero resultante<br/>3. Corregir el formato y/o contenido<br/>4. Almacenarlo en el repositorio del proyecto"
   label_functional_analysis: "Análisis funcional"
   label_aims_catalog: "Catálogo de objetivos"
   label_test_cases: "Casos de prueba"

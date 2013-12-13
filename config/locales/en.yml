@@ -5,7 +5,7 @@ en:
     dir_cp: "Route to test cases template:"
     dir_pp: "Route to project plan template:"
   hook_title: "Project Doc. Generation"
-  hook_instructions: "Documents will generate from Redmine data. Follow these generic steps:<br/>1. Clik on the document link, or select a project template and click in 'Generate'<br/>2. Save the document<br/>3. Correct format and/or content<br/>4. Save in the project repository"
+  hook_instructions: "Documents will generate from Redmine data. Follow these generic steps:<br/>1. Clik on the document link<br/>2. Save the document<br/>3. Correct format and/or content<br/>4. Save in the project repository"
   label_functional_analysis: "Functional analysis"
   label_aims_catalog: "Aims catalog"
   label_test_cases: "Test cases"
