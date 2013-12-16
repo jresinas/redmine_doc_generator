@@ -4,9 +4,9 @@ require 'rods'
 require 'odf-report'
 
 Redmine::Plugin.register :redmine_doc_generator do
-  name 'Doc Generation Hook'
+  name 'Documentation Generator'
   author 'jresinas, ogonzalez'
-  description 'Connect with Doc Generation Servlet'
+  description 'Plugin to generate project documentation: Project Plan, Aims Catalog, Functional Analysis and Test Cases.'
   version '0.0.1'
   author_url 'http://www.emergya.es'
 
