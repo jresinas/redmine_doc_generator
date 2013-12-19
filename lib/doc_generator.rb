@@ -9,13 +9,13 @@ class DocGenerator
     sheet.setCurrentTable("General")
     project = Project.find(project_id)
 
-    # Fecha del documento
+    # Campo Fecha del documento
     time = Time.new
     OdsManager.write_cell(sheet,4,2,'string',time.strftime("%d-%m-%Y"))
-    # Proyecto
+    # Campo Proyecto
     OdsManager.write_cell(sheet,6,2,'string',project.name)
 
-    # Expediente, Tecnología, Ciclo de vida, Observaciones
+    # Campos Expediente, Tecnología, Ciclo de vida, Observaciones
     project.visible_custom_field_values.each do |element|
       case element.custom_field.name
         when "Expediente"
@@ -924,11 +924,23 @@ class DocGenerator
 
   # Devuelve un array con el id del proyecto y de todos sus proyectos relacionados
   def self.get_project_and_related_project_ids(project_id)
+    aux_ids = Array.new
     project_ids = Array.new
-    project_ids << project_id
-    child_projects_id = Project.find_all_by_parent_id(project_id)
-    project_ids = (project_ids << child_projects_id).flatten
-
+    aux_ids << project_id.to_i
+    
+    while !aux_ids.empty?
+      project = aux_ids.shift
+      child_projects = Project.find_all_by_parent_id(project)
+      
+      child_projects.each do |child_project|
+        if !project_ids.include?(child_project.id) && !aux_ids.include?(child_project.id)
+          aux_ids << child_project.id
+        end
+      end
+      
+      project_ids << project
+    end
+    
     return project_ids
   end
 
