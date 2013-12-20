@@ -145,11 +145,11 @@ class GeneratorsController < ApplicationController
     # Generamos y procesamos el documento de texto y lo enviamos al usuario
     report = ODFReport::Report.new(template) do |r|
       r.add_field :functional_analysis_doc_name, 'P_PRO-'+expediente+'-Analisis_Funcional.odt'
-      DocGenerator.test_case_pf(r, params[:project_id], func_test)
-      DocGenerator.test_case_pu(r, params[:project_id], unity_test)
-      DocGenerator.test_case_ps(r, params[:project_id], system_test)
-      DocGenerator.test_case_pr(r, params[:project_id], performance_test)
-      DocGenerator.test_case_pe(r, params[:project_id], static_test)
+      DocGenerator.test_case_functional_tests(r, params[:project_id], func_test)
+      DocGenerator.test_case_unity_tests(r, params[:project_id], unity_test)
+      DocGenerator.test_case_system_tests(r, params[:project_id], system_test)
+      DocGenerator.test_case_performance_tests(r, params[:project_id], performance_test)
+      DocGenerator.test_case_static_tests(r, params[:project_id], static_test)
     end
     report.generate("tmp/"+filename+".odt")
     send_file 'tmp/'+filename+'.odt' ,:x_sendfile => true, :filename => 'P_PRO-'+expediente+'-Plan_Pruebas.odt'

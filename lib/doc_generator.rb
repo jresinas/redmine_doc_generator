@@ -269,7 +269,6 @@ class DocGenerator
       r.add_field :obj_cod, 'OB-00X'
       r.add_field :obj_titulo, 'Título del objetivo.'
       r.add_field :obj_desc, 'Descripción del objetivo.'
-#      r.add_field :obj_index, 1
     # Si no, creamos una tabla y su comentario para cada tarea de tipo "Objetivo"
     else
       r.add_section("Sección1", issues) do |s|
@@ -283,7 +282,6 @@ class DocGenerator
         }
         s.add_field :obj_titulo, :subject
         s.add_field(:obj_desc) {|issue| DocGenerator.parsing_wiki_text(issue.description)}
-#        s.add_field(:obj_index) {|issue| issues.index(issue)+1}
       end
     end
   end
@@ -307,7 +305,6 @@ class DocGenerator
       r.add_field :act_nombre, 'Nombre del Actor.'
       r.add_field :act_desc, 'Descripción del Actor.'
       r.add_field :act_coment, 'Comentario con información adicional.'
-#      r.add_field :act_index, 1
     # Si no, creamos una tabla y su comentario para cada requisito de actor
     else
       r.add_section("SecciónActor", actors) do |s|
@@ -322,7 +319,6 @@ class DocGenerator
         s.add_field :act_nombre, :subject
         s.add_field(:act_desc) {|actor| DocGenerator.parsing_wiki_text(actor.description)}
         s.add_field(:act_coment) {|actor| ""}
-#        s.add_field(:act_index) {|actor| actors.index(actor)+1}
       end
     end
   end
@@ -353,8 +349,8 @@ class DocGenerator
       r.add_field :cu_relacion, "Relaciones del caso de uso: objetivos, otros casos de uso, requisitos."
       r.add_field :cu_pre, "Condición de necesario cumplimiento antes de producirse el caso de uso."
       r.add_field :cu_secuencia, "Título de casuística 1\n1. Paso 1\n2. Paso 2\nN. Paso N\n\nTítulo de casuística 2\n1. Paso 1\n2. Paso 2\nN. Paso N"
+      r.add_field :cu_pre, "Condición consecuencia de la ejecución del caso de uso."
       r.add_field :cu_excepciones, "Excepciones"
-#      s.add_field(:cu_index) {|use_case| use_cases.index(use_case)+1}
     # En caso contrario, se muestra el contenido de los casos de uso
     else
       r.add_section("SecciónCU", use_cases) do |s|
@@ -378,7 +374,6 @@ class DocGenerator
         s.add_field(:cu_secuencia) {|use_case| CustomValue.find_all_by_customized_id_and_custom_field_id(use_case.id, secuencia_id)}
         s.add_field(:cu_post) {|use_case| CustomValue.find_all_by_customized_id_and_custom_field_id(use_case.id, post_id)}
         s.add_field(:cu_excepciones) {|use_case| CustomValue.find_all_by_customized_id_and_custom_field_id(use_case.id, excepciones_id)}
-#        s.add_field(:cu_index) {|use_case| use_cases.index(use_case)+1}
       end
     end
   end
@@ -401,7 +396,7 @@ class DocGenerator
       r.add_field :rf_cod, "RF-00X"
       r.add_field :rf_titulo, "Título del requisito funcional."
       r.add_field :rf_desc, "Descripción del requisito con lenguaje natural, basado en patrones linguisticos simples."
-      r.add_field :rf_actores, ""
+      r.add_field :rf_actor, ""
       r.add_field :rf_relacion, ""
     # En caso contrario, se muestra el contenido de los requisitos funcionales
     else
@@ -515,7 +510,7 @@ class DocGenerator
 ### 
 #########################################################################
   # Función para obtener y mostrar las pruebas funcionales en el documento de casos de prueba
-  def self.test_case_pf(r, project_id, tests)
+  def self.test_case_functional_tests(r, project_id, tests)
     # Obtenemos el id de los trackers de requisitos y casos de uso
     requisito_id = Tracker.find_by_name('Requisitos').id
     caso_uso_id = Tracker.find_by_name('Casos de Uso').id
@@ -543,6 +538,12 @@ class DocGenerator
       r.add_field :pf_entorno, "Entornos del caso de prueba."
       r.add_field :pf_test, "Test del caso de prueba."
       r.add_field :pf_res_esp, "Resultado esperado para el caso de prueba."
+      r.add_field :rpf_cod, "RPF-00X"
+      r.add_field :rpf_titulo, "Título del caso de prueba"
+      r.add_field :rpf_estado, "Estado del caso de prueba"
+      r.add_field :rpf_fecha, "Fecha de realización del caso de prueba"
+      r.add_field :rpf_res_esp, "Resultado esperado para el caso de prueba"
+      r.add_field :rpf_res_obt, "Resultado obtenido del caso de prueba"
     # En caso contrario, se muestra el contenido de las pruebas funcionales y registros de pruebas funcionales
     else
       r.add_section("SecciónPF", tests) do |spf|
@@ -585,7 +586,7 @@ class DocGenerator
   end
 
   # Función para obtener y mostrar las pruebas unitarias en el documento de casos de prueba
-  def self.test_case_pu(r, project_id, tests)
+  def self.test_case_unity_tests(r, project_id, tests)
     # Obtenemos el id de los trackers de requisitos y casos de uso
     requisito_id = Tracker.find_by_name('Requisitos').id
     caso_uso_id = Tracker.find_by_name('Casos de Uso').id
@@ -614,6 +615,12 @@ class DocGenerator
       r.add_field :pu_relacion, "Relaciones del caso de prueba: Casos de Uso, Requisitos Funcionales, Requisitos de Información."
       r.add_field :pu_entorno, "Entornos del caso de prueba."
       r.add_field :pu_test, "Test del caso de prueba."
+      r.add_field :rpu_cod, "RPU-00X"
+      r.add_field :rpu_titulo, "Título del caso de prueba"
+      r.add_field :rpu_estado, "Estado del caso de prueba"
+      r.add_field :rpu_fecha, "Fecha de realización del caso de prueba"
+      r.add_field :rpu_res_esp, "Resultado esperado para el caso de prueba"
+      r.add_field :rpu_res_obt, "Resultado obtenido del caso de prueba"
     # En caso contrario, se muestra el contenido de las pruebas unitarias y registros de pruebas unitarias
     else
       r.add_section("SecciónPU", tests) do |spu|
@@ -656,7 +663,7 @@ class DocGenerator
   end
 
   # Función para obtener y mostrar las pruebas de sistema en el documento de casos de prueba
-  def self.test_case_ps(r, project_id, tests)
+  def self.test_case_system_tests(r, project_id, tests)
     # Obtenemos el id de los trackers de requisitos y casos de uso
     requisito_id = Tracker.find_by_name('Requisitos').id
     caso_uso_id = Tracker.find_by_name('Casos de Uso').id
@@ -685,6 +692,12 @@ class DocGenerator
       r.add_field :ps_relacion, "Relaciones del caso de prueba: Casos de Uso, Requisitos Funcionales, Requisitos de Información."
       r.add_field :ps_entorno, "Entornos del caso de prueba."
       r.add_field :ps_test, "Test del caso de prueba."
+      r.add_field :rps_cod, "RPS-00X"
+      r.add_field :rps_titulo, "Título del caso de prueba"
+      r.add_field :rps_estado, "Estado del caso de prueba"
+      r.add_field :rps_fecha, "Fecha de realización del caso de prueba"
+      r.add_field :rps_res_esp, "Resultado esperado para el caso de prueba"
+      r.add_field :rps_res_obt, "Resultado obtenido del caso de prueba"
     # En caso contrario, se muestra el contenido de las pruebas de sistema y registros de pruebas de sistema
     else
       r.add_section("SecciónPS", tests) do |sps|
@@ -727,7 +740,7 @@ class DocGenerator
   end
 
   # Función para obtener y mostrar las pruebas de rendimiento en el documento de casos de prueba
-  def self.test_case_pr(r, project_id, tests)
+  def self.test_case_performance_tests(r, project_id, tests)
     # Obtenemos el id de los trackers de requisitos y casos de uso
     requisito_id = Tracker.find_by_name('Requisitos').id
     caso_uso_id = Tracker.find_by_name('Casos de Uso').id
@@ -756,6 +769,12 @@ class DocGenerator
       r.add_field :pr_relacion, "Relaciones del caso de prueba: Casos de Uso, Requisitos Funcionales, Requisitos de Información."
       r.add_field :pr_entorno, "Entornos del caso de prueba."
       r.add_field :pr_test, "Test del caso de prueba."
+      r.add_field :rpr_cod, "RPR-00X"
+      r.add_field :rpr_titulo, "Título del caso de prueba"
+      r.add_field :rpr_estado, "Estado del caso de prueba"
+      r.add_field :rpr_fecha, "Fecha de realización del caso de prueba"
+      r.add_field :rpr_res_esp, "Resultado esperado para el caso de prueba"
+      r.add_field :rpr_res_obt, "Resultado obtenido del caso de prueba"
     # En caso contrario, se muestra el contenido de las pruebas de rendimiento y registros de pruebas de rendimiento
     else
       r.add_section("SecciónPR", tests) do |spr|
@@ -798,7 +817,7 @@ class DocGenerator
   end
 
   # Función para obtener y mostrar las pruebas estáticas en el documento de casos de prueba
-  def self.test_case_pe(r, project_id, tests)
+  def self.test_case_static_tests(r, project_id, tests)
     # Obtenemos el id de los trackers de requisitos y casos de uso
     requisito_id = Tracker.find_by_name('Requisitos').id
     caso_uso_id = Tracker.find_by_name('Casos de Uso').id
@@ -827,6 +846,12 @@ class DocGenerator
       r.add_field :pe_relacion, "Relaciones del caso de prueba: Casos de Uso, Requisitos Funcionales, Requisitos de Información."
       r.add_field :pe_entorno, "Entornos del caso de prueba."
       r.add_field :pe_test, "Test del caso de prueba."
+      r.add_field :rpe_cod, "RPE-00X"
+      r.add_field :rpe_titulo, "Título del caso de prueba"
+      r.add_field :rpe_estado, "Estado del caso de prueba"
+      r.add_field :rpe_fecha, "Fecha de realización del caso de prueba"
+      r.add_field :rpe_res_esp, "Resultado esperado para el caso de prueba"
+      r.add_field :rpe_res_obt, "Resultado obtenido del caso de prueba"
     # En caso contrario, se muestra el contenido de las pruebas estáticas y registros de pruebas estáticas
     else
       r.add_section("SecciónPE", tests) do |spe|
@@ -913,7 +938,7 @@ class DocGenerator
 
     expedient_custom_value = CustomValue.find_by_customized_id_and_custom_field_id(project.id, expedient_id)
 
-    if expedient_custom_value.present?
+    if !expedient_custom_value.value.empty?
       expedient_custom_value.value.gsub(", ",",")
       arr = expedient_custom_value.value.split(",")
       expediente = arr[arr.length-1]
